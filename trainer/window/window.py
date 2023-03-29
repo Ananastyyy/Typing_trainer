@@ -1,16 +1,31 @@
 from PyQt5.QtWidgets import QMainWindow
-from trainer.window.gui.widgets import Widget, Line, Button, Label, MenuBar, StatusBar, Menu, Action, Font
-from trainer.window.logic.helpers import SentenceGenerator, LineHandler
+
+from trainer.window.gui.dialogs.login_dialog import LoginDialog
+from trainer.window.gui.dialogs.statistics_dialog import StatisticsDialog
+from trainer.window.gui.widgets.action import Action
+from trainer.window.gui.widgets.button import Button
+from trainer.window.gui.widgets.font import Font
+from trainer.window.gui.widgets.label import Label
+from trainer.window.gui.widgets.line import Line
+from trainer.window.gui.widgets.menu import Menu
+from trainer.window.gui.widgets.menu_bar import MenuBar
+from trainer.window.gui.widgets.status_bar import StatusBar
+from trainer.window.gui.widgets.widget import Widget
+from trainer.window.logic.database_handler import DatabaseHandler
+from trainer.window.logic.sentence_generator import SentenceGenerator
+from trainer.window.logic.line_handler import LineHandler
 
 
 class Window(QMainWindow):
     def __init__(self, *__args):
         super().__init__(*__args)
+        self.setWindowTitle("QuickType Pro: Practice to Speed Up Your Fingers!")
         self.setFixedSize(722, 361)
         self.setObjectName("MainWindow")
         self._build_user_interface()
         self.generator = SentenceGenerator()
         self.line_handler = LineHandler()
+        self.database = DatabaseHandler("database/users.json")
 
     def _build_user_interface(self):
         self.central_widget = Widget(self, 0, 0, 0, 0)
@@ -35,7 +50,11 @@ class Window(QMainWindow):
         self.menuBar = MenuBar(self, 0, 0, 722, 26)
         self.userMenu = Menu(self.menuBar, "Пользователь")
         self.setMenuBar(self.menuBar)
+        self.auth = Action(self, "Авторизация")
+        self.auth.triggered.connect(self.show_login_dialog)
         self.stat = Action(self, "Статистика")
+        self.stat.triggered.connect(self.show_statistics_dialog)
+        self.userMenu.addAction(self.auth)
         self.userMenu.addAction(self.stat)
         self.menuBar.addAction(self.userMenu.menuAction())
         self.show()
@@ -48,8 +67,22 @@ class Window(QMainWindow):
         self.line_edit.setReadOnly(False)
 
     def on_text_changed(self):
-        time = self.line_handler.handle(self.line_edit)
-        if time:
-            print(time)
+        data = self.line_handler.handle(self.line_edit)
+        if data:
+            symbols = data[0]
+            rate = data[1]
+            self.minute_symbols.setText(f"{symbols}")
+            self.mistake_percents.setText(f"{rate}%")
+            if self.database.is_authorised():
+                self.database.update_user_stats(1, symbols, rate)
             self.line_edit.clear()
             self.on_start_click()
+
+    def show_login_dialog(self):
+        login_dialog = LoginDialog(self.database)
+        login_dialog.exec_()
+
+    def show_statistics_dialog(self):
+        if self.database.is_authorised():
+            stat_dialog = StatisticsDialog(self.database)
+            stat_dialog.exec_()
