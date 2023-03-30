@@ -1,7 +1,6 @@
 from PyQt5.QtCore import QElapsedTimer
 from PyQt5.QtGui import QPalette, QColor
-
-from trainer.window.gui.widgets.line import Line
+from PyQt5.QtWidgets import QLineEdit
 
 
 class LineHandler:
@@ -17,7 +16,7 @@ class LineHandler:
         self.blocked_text = blocked_text
         self.size = len(blocked_text)
 
-    def handle(self, line_edit: Line) -> tuple[int, int] or None:
+    def handle(self, line_edit: QLineEdit) -> tuple[int, int] or None:
         edit_text = line_edit.text()
         size = len(edit_text)
 
