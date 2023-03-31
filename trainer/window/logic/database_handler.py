@@ -16,8 +16,11 @@ class DatabaseHandler:
         self._add_user(user_name)
 
     def _load_data(self):
-        with open(self.file_path, 'r') as f:
-            self.data = json.load(f)
+        try:
+            with open(self.file_path, 'r') as f:
+                self.data = json.load(f)
+        except json.decoder.JSONDecodeError:
+            self.data = {}
 
     def _save_data(self):
         with open(self.file_path, 'w') as f:
