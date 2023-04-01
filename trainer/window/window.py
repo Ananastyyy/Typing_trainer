@@ -73,8 +73,7 @@ class Window(QMainWindow):
             rate = data[1]
             self.minute_symbols.setText(f"{symbols}")
             self.mistake_percents.setText(f"{rate}%")
-            if self.database.is_authorised():
-                self.database.update_user_stats(1, symbols, rate)
+            self.database.update_user_stats(1, symbols, rate)
             self.line_edit.clear()
             self.on_start_click()
 
@@ -83,6 +82,5 @@ class Window(QMainWindow):
         login_dialog.exec_()
 
     def show_statistics_dialog(self):
-        if self.database.is_authorised():
-            stat_dialog = StatisticsDialog(self.database)
-            stat_dialog.exec_()
+        stat_dialog = StatisticsDialog(self.database)
+        stat_dialog.exec_()
