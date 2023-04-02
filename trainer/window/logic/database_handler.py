@@ -8,10 +8,10 @@ class DatabaseHandler:
         self._load_data()
         self.user_name = None
 
-    def is_authorised(self) -> bool:
+    def _is_authorised(self) -> bool:
         return self.user_name
 
-    def authorise(self, user_name: str):
+    def authorise(self, user_name: str) -> None:
         self.user_name = user_name
         self._add_user(user_name)
 
@@ -35,13 +35,15 @@ class DatabaseHandler:
             }
             self._save_data()
 
-    def update_user_stats(self, sentences_solved, avg_speed, error_rate):
-        if self.is_authorised:
+    def update_user_stats(self, sentences_solved, avg_speed, error_rate) -> None:
+        if self._is_authorised():
             self.data[self.user_name]['sentences_solved'] += sentences_solved
             self.data[self.user_name]['avg_speed'] = avg_speed
             self.data[self.user_name]['error_rate'] = error_rate
             self._save_data()
 
-    def get_user_stats(self) -> tuple[int, int, int]:
-        if self.is_authorised():
+    def get_user_stats(self) -> tuple:
+        if self._is_authorised():
             return tuple(self.data[self.user_name].values())
+        else:
+            return "авторизируйся", "чтобы", "узнать"
