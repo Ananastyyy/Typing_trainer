@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, \
+    QPushButton, QVBoxLayout
 
 
 class LoginDialog(QDialog):

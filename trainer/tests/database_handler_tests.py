@@ -1,5 +1,4 @@
 import unittest
-import os
 
 from trainer.window.logic.database_handler import DatabaseHandler
 
