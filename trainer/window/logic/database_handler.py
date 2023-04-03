@@ -35,7 +35,8 @@ class DatabaseHandler:
             }
             self._save_data()
 
-    def update_user_stats(self, sentences_solved, avg_speed, error_rate) -> None:
+    def update_user_stats(self, sentences_solved, avg_speed,
+                          error_rate) -> None:
         if self.is_authorised():
             self.data[self.user_name]['sentences_solved'] += sentences_solved
             self.data[self.user_name]['avg_speed'] = avg_speed

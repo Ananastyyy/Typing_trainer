@@ -1,8 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
-from trainer.window.logic.database_handler import DatabaseHandler
-
 
 class StatisticsDialog(QDialog):
     def __init__(self, data: tuple):

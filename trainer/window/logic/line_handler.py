@@ -24,7 +24,8 @@ class LineHandler:
             return None
         palette = line_edit.palette()
         is_match = edit_text == self.blocked_text[:size]
-        palette.setColor(QPalette.Text, QColor('black') if is_match else QColor('red'))
+        palette.setColor(QPalette.Text,
+                         QColor('black') if is_match else QColor('red'))
 
         if not is_match:
             if size > 1:

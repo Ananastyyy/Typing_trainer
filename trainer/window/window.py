@@ -19,7 +19,8 @@ from trainer.window.logic.line_handler import LineHandler
 class Window(QMainWindow):
     def __init__(self, *__args):
         super().__init__(*__args)
-        self.setWindowTitle("QuickType Pro: Practice to Speed Up Your Fingers!")
+        self.setWindowTitle(
+            "QuickType Pro: Practice to Speed Up Your Fingers!")
         self.setFixedSize(722, 361)
         self.setObjectName("MainWindow")
         self._build_user_interface()
@@ -37,13 +38,17 @@ class Window(QMainWindow):
         self.line_blocked = Line(self.widget, font, 0, 100, 551, 51, True)
         button_style = """QPushButton:hover{background-color: #666666;}
                           QPushButton:!hover {background-color: #cccccc;}"""
-        label_style = "border-color: #000000; border-width: 1px; border-button_style: solid;"
+        label_style = "border-color: #000000; " \
+                      "border-width: 1px; border-button_style: solid;"
 
-        self.start_button = Button(self.widget, "Начать", button_style, 198, 170, 150, 50)
+        self.start_button = Button(self.widget, "Начать",
+                                   button_style, 198, 170, 150, 50)
         self.start_button.clicked.connect(self.on_start_click)
 
-        self.minute_symbols = Label(self.widget, "0", label_style, font, 360, 10, 51, 31)
-        self.mistake_percents = Label(self.widget, "0", label_style, font, 450, 10, 81, 31)
+        self.minute_symbols = Label(self.widget, "0",
+                                    label_style, font, 360, 10, 51, 31)
+        self.mistake_percents = Label(self.widget, "0",
+                                      label_style, font, 450, 10, 81, 31)
         self.setCentralWidget(self.central_widget)
         self.statusbar = StatusBar(self)
         self.setStatusBar(self.statusbar)
