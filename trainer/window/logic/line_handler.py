@@ -32,6 +32,6 @@ class LineHandler:
                     line_edit.backspace()
             self.error_count += 1
         elif size == self.size:
-            return int(60000 * size / self.timer.elapsed()), int(100 * self.error_count / size)
+            return int(60000 * size / self.timer.elapsed()), self.error_count
 
         line_edit.setPalette(palette)

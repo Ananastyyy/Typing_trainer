@@ -43,7 +43,7 @@ class Window(QMainWindow):
         self.start_button.clicked.connect(self.on_start_click)
 
         self.minute_symbols = Label(self.widget, "0", label_style, font, 360, 10, 51, 31)
-        self.mistake_percents = Label(self.widget, "0%", label_style, font, 450, 10, 81, 31)
+        self.mistake_percents = Label(self.widget, "0", label_style, font, 450, 10, 81, 31)
         self.setCentralWidget(self.central_widget)
         self.statusbar = StatusBar(self)
         self.setStatusBar(self.statusbar)
@@ -70,10 +70,10 @@ class Window(QMainWindow):
         data = self.line_handler.handle(self.line_edit)
         if data:
             symbols = data[0]
-            rate = data[1]
+            count = data[1]
             self.minute_symbols.setText(f"{symbols}")
-            self.mistake_percents.setText(f"{rate}%")
-            self.database.update_user_stats(1, symbols, rate)
+            self.mistake_percents.setText(f"{count}")
+            self.database.update_user_stats(1, symbols, count)
             self.line_edit.clear()
             self.on_start_click()
 
@@ -82,5 +82,7 @@ class Window(QMainWindow):
         login_dialog.exec_()
 
     def show_statistics_dialog(self):
-        stat_dialog = StatisticsDialog(self.database)
-        stat_dialog.exec_()
+        data = self.database.get_user_stats()
+        if data:
+            stat_dialog = StatisticsDialog(data)
+            stat_dialog.exec_()
