@@ -5,4 +5,3 @@ class Action(QAction):
     def __init__(self, window: QWidget, text: str):
         super().__init__(window)
         self.setText(text)
-        
