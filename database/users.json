@@ -1,0 +1,22 @@
+{
+  "\u043b\u043b": {
+    "sentences_solved": 1,
+    "avg_speed": 103,
+    "error_rate": 17
+  },
+  "\u0430": {
+    "sentences_solved": 1,
+    "avg_speed": 112,
+    "error_rate": 4
+  },
+  "": {
+    "sentences_solved": 0,
+    "avg_speed": 0,
+    "error_rate": 0
+  },
+  "nastya": {
+    "sentences_solved": 1,
+    "avg_speed": 93,
+    "error_rate": 5
+  }
+}

@@ -10,7 +10,7 @@ class StatisticsDialog(QDialog):
         self.symbols_label = QLabel(f"Символов в минуту: {data[1]}")
         self.rate_label = QLabel(f"Количество ошибок: {data[2]}")
 
-        self.statistics_button = QPushButton('ОК')
+        self.statistics_button = QPushButton("ОК")
         self.statistics_button.clicked.connect(self.accept)
 
         layout = QVBoxLayout()
