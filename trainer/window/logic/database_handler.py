@@ -1,3 +1,4 @@
+import configparser
 import json
 
 
@@ -6,7 +7,16 @@ class DatabaseHandler:
         self.file_path = file_path
         self.data = {}
         self._load_data()
+        self._init_config_file()
         self.user_name = None
+
+    def _init_config_file(self):
+        config = configparser.ConfigParser()
+        config.read("config/logic.ini")
+        constants = dict(config.items("DATABASE_HANDLER"))
+        self.solved = constants["solved"]
+        self.speed = constants["avg_speed"]
+        self.error = constants["error_rate"]
 
     def is_authorised(self) -> bool:
         return self.user_name
@@ -29,18 +39,20 @@ class DatabaseHandler:
     def _add_user(self, name: str):
         if name not in self.data:
             self.data[name] = {
-                "sentences_solved": 0,
-                "avg_speed": 0,
-                "error_rate": 0
+                self.solved: 0,
+                self.speed: 0,
+                self.error: 0
             }
             self._save_data()
 
     def update_user_stats(self, sentences_solved: int, avg_speed: int,
                           error_rate: int) -> None:
         if self.is_authorised():
-            self.data[self.user_name]["sentences_solved"] += sentences_solved
-            self.data[self.user_name]["avg_speed"] = avg_speed
-            self.data[self.user_name]["error_rate"] = error_rate
+            self.data[self.user_name][self.solved] += \
+                sentences_solved
+            self.data[self.user_name][self.speed] = avg_speed
+            self.data[self.user_name][self.error] = \
+                error_rate
             self._save_data()
 
     def get_user_stats(self) -> tuple:

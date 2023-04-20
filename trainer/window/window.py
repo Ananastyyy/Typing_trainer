@@ -1,3 +1,5 @@
+import configparser
+
 from PyQt5.QtCore import QRect
 from PyQt5.QtWidgets import QMainWindow, QFrame
 
@@ -11,7 +13,6 @@ from trainer.window.gui.widgets.label import Label
 from trainer.window.gui.widgets.line import Line
 from trainer.window.gui.widgets.menu import Menu
 from trainer.window.gui.widgets.menu_bar import MenuBar
-from trainer.window.gui.widgets.status_bar import StatusBar
 from trainer.window.gui.widgets.widget import Widget
 from trainer.window.logic.database_handler import DatabaseHandler
 from trainer.window.logic.sentence_generator import SentenceGenerator
@@ -21,96 +22,81 @@ from trainer.window.logic.line_handler import LineHandler
 class Window(QMainWindow):
     def __init__(self, *__args):
         super().__init__(*__args)
-        self.setWindowTitle(
-            "QuickType Pro: Practice to Speed Up Your Fingers!")
-        self.setFixedSize(700, 590)
-        self.setStyleSheet("background-color: lightblue")
-        self.setObjectName("MainWindow")
+        self._init_config_file()
+        self._build_main_window()
         self._build_user_interface()
         self.generator = SentenceGenerator()
         self.line_handler = LineHandler()
-        self.database = DatabaseHandler("database/users.json")
+        self.database = DatabaseHandler(self.constants["path_to_database"])
+
+    def _init_config_file(self):
+        config = configparser.ConfigParser()
+        config.read("config/window.ini", encoding='utf-8')
+        self.constants = dict(config.items("WINDOW"))
+
+    def _build_main_window(self):
+        self.setWindowTitle(self.constants["window_title"])
+        self.setFixedSize(700, 590)
+        self.setStyleSheet(self.constants["background_window"])
+        self.central_widget = Widget(self, 0, 0, 0, 0)
+        self.setCentralWidget(self.central_widget)
+        self.widget = Widget(self.central_widget, 57, 0, 593, 241)
+        self.font = Font()
 
     def _build_user_interface(self):
-        self.central_widget = Widget(self, 0, 0, 0, 0)
-        self.widget = Widget(self.central_widget, 57, 0, 593, 241)
-        font = Font()
-        self.line_edit = Line(self.widget, font, 0, 50, 593, 51, True)
+        self._build_line()
+        self._build_keyboard()
+        self._build_button()
+        self._build_label()
+        self.show()
+
+    def _build_line(self):
+        self.line_edit = Line(self.widget, self.font, 0, 50, 593, 51, True)
         self.line_edit.textChanged.connect(self.on_text_changed)
 
+        self.line_blocked = Line(self.widget, self.font, 0, 100, 593, 51, True)
+
+    def _build_keyboard(self):
         self.keyboardFrame = QFrame(self.central_widget)
         self.keyboardFrame.setGeometry(QRect(57, 260, 761, 311))
 
-        self.keyboard = Keyboard(self.keyboardFrame, font)
+        self.keyboard = Keyboard(self.keyboardFrame, self.font)
 
-        self.line_blocked = Line(self.widget, font, 0, 100, 593, 51, True)
-        button_style = """QPushButton:hover{background-color: #666666;}
-                          QPushButton:!hover {background-color: #cccccc;}"""
-        label_style = "border-color: #000000; " \
-                      "border-width: 1px; border-button_style: solid;"
-
-        self.start_button = Button(self.widget, "Сгенерировать пример",
-                                   button_style, 221, 180, 150, 50)
+    def _build_button(self):
+        button_style = self.constants["button_style"]
+        self.start_button = Button(self.widget, self.constants[
+            "generate_sentences"], button_style, 221, 180, 150, 50)
         self.start_button.clicked.connect(self.on_start_click)
 
-        self.emoji_time = Label(self.widget, "⏰",
-                                label_style, font, 328, 10, 31, 31)
-        self.emoji_time.setToolTip('Скорость')
+    def _build_label(self):
+        label_style = self.constants["label_style"]
+        self.emoji_time = Label(self.widget, self.constants["emoji_time"],
+                                label_style, self.font, 328, 10, 31, 31)
+        self.emoji_time.setToolTip(self.constants["description_timer"])
 
-        self.minute_symbols = Label(self.widget, "0",
-                                    label_style, font, 360, 10, 51, 31)
+        self.minute_symbols = Label(self.widget, self.constants["start_time"],
+                                    label_style, self.font, 360, 10, 51, 31)
 
-        self.emoji_mistake = Label(self.widget, "❌",
-                                   label_style, font, 418, 10, 31, 31)
-        self.emoji_mistake.setToolTip('Количество ошибок')
-        self.mistake_percents = Label(self.widget, "0",
-                                      label_style, font, 450, 10, 81, 31)
+        self.emoji_mistake = Label(self.widget, self.constants["emoji_fail"],
+                                   label_style, self.font, 418, 10, 31, 31)
+        self.emoji_mistake.setToolTip(self.constants["description_error"])
+        self.mistake_percents = Label(self.widget,
+                                      self.constants["start_error"],
+                                      label_style, self.font, 450, 10, 81, 31)
 
-        self.setCentralWidget(self.central_widget)
-        self.statusbar = StatusBar(self)
-        self.setStatusBar(self.statusbar)
+    def _build_menu_bar(self):
         self.menuBar = MenuBar(self, 0, 0, 722, 26)
-        menu_style = """
-        QMenuBar {
-            background-color: blue;
-            color: white;
-        }
-
-        QMenuBar::item {
-            background-color: blue;
-            color: white;
-        }
-
-        QMenuBar::item:selected {
-            background-color: white;
-            color: black;
-        }
-        QMenu {
-            background-color: blue;
-            color: white;
-        }
-
-        QMenu::item {
-            background-color: blue;
-            color: white;
-        }
-
-        QMenu::item:selected {
-            background-color: white;
-            color: black;
-        }
-        """
+        menu_style = self.constants["menu_bar_style"]
         self.menuBar.setStyleSheet(menu_style)
-        self.userMenu = Menu(self.menuBar, "Пользователь")
+        self.userMenu = Menu(self.menuBar, self.constants["user_menu"])
         self.setMenuBar(self.menuBar)
-        self.auth = Action(self, "Авторизация")
+        self.auth = Action(self, self.constants["action_auth"])
         self.auth.triggered.connect(self.show_login_dialog)
-        self.stat = Action(self, "Статистика")
+        self.stat = Action(self, self.constants["action_stat"])
         self.stat.triggered.connect(self.show_statistics_dialog)
         self.userMenu.addAction(self.auth)
         self.userMenu.addAction(self.stat)
         self.menuBar.addAction(self.userMenu.menuAction())
-        self.show()
 
     def on_start_click(self):
         self.line_edit.clear()

@@ -2,7 +2,9 @@ from PyQt5.QtCore import QElapsedTimer
 from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QLineEdit
 
+import config
 from trainer.window.gui.widgets.keyboard import Keyboard
+import configparser
 
 
 class LineHandler:
@@ -12,7 +14,14 @@ class LineHandler:
         self.size = None
         self.error_count = None
         self.keyboard = None
-        self.milliseconds_to_minutes = 60000
+        self._init_config_file()
+
+    def _init_config_file(self):
+        self.config = configparser.ConfigParser()
+        self.config.read("config/logic.ini")
+        self.constants = dict(self.config.items("LINE_HANDLER"))
+        self.milliseconds_to_minutes = self.constants[
+            "milliseconds_to_minutes"]
 
     def set_blocked_text(self, blocked_text: str):
         self.timer.start()
@@ -28,10 +37,9 @@ class LineHandler:
         if not size:
             keyboard.select_button(self.blocked_text[0])
             return None
-        palette = line_edit.palette()
+
         is_match = edit_text == self.blocked_text[:size]
-        palette.setColor(QPalette.Text,
-                         QColor("black") if is_match else QColor("red"))
+        palette = self._set_color_to_text(line_edit, is_match)
 
         if not is_match:
             keyboard.select_button("Backspace")
@@ -40,9 +48,17 @@ class LineHandler:
                     line_edit.backspace()
             self.error_count += 1
         elif size == self.size:
-            return int(self.milliseconds_to_minutes * size /
-                       self.timer.elapsed()), self.error_count
+            return int(int(self.milliseconds_to_minutes)
+                       * size / self.timer.elapsed()), self.error_count
         else:
             keyboard.select_button(self.blocked_text[size])
 
         line_edit.setPalette(palette)
+
+    def _set_color_to_text(self, line_edit: QLineEdit, is_match: bool):
+        palette = line_edit.palette()
+        palette.setColor(QPalette.Text,
+                         QColor(self.constants["color_for_right_text"])
+                         if is_match else
+                         QColor(self.constants["color_for_wrong_text"]))
+        return palette

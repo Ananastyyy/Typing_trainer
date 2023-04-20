@@ -5,8 +5,8 @@
     "error_rate": 17
   },
   "\u0430": {
-    "sentences_solved": 1,
-    "avg_speed": 112,
+    "sentences_solved": 3,
+    "avg_speed": 191,
     "error_rate": 4
   },
   "": {
@@ -18,5 +18,15 @@
     "sentences_solved": 1,
     "avg_speed": 93,
     "error_rate": 5
+  },
+  "f": {
+    "sentences_solved": 1,
+    "avg_speed": 222,
+    "error_rate": 0
+  },
+  "l": {
+    "sentences_solved": 1,
+    "avg_speed": 156,
+    "error_rate": 1
   }
 }
