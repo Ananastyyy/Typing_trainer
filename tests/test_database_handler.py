@@ -5,9 +5,13 @@ from trainer.window.logic.database_handler import DatabaseHandler
 
 
 class TestDatabaseHandler(unittest.TestCase):
-
     def setUp(self):
         self.database = DatabaseHandler("database/test.json")
+        self.clear_file()
+
+    def clear_file(self):
+        with open('database/test.json', 'w') as f:
+            json.dump({}, f)
 
     def test_is_authorised(self):
         self.setUp()
@@ -21,8 +25,6 @@ class TestDatabaseHandler(unittest.TestCase):
 
     def test_update_user_stats(self):
         self.setUp()
-        with open('database/test.json', 'w') as f:
-            json.dump({}, f)
         self.database.authorise("Dan")
         self.database.update_user_stats(3, 230, 0)
         self.assertEqual(self.database.get_user_stats(), (3, 230, 0),

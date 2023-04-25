@@ -31,29 +31,35 @@ class LineHandler:
 
     def handle(self, line_edit: QLineEdit, keyboard: Keyboard) \
             -> tuple[int, int] or None:
-        edit_text = line_edit.text()
-        size = len(edit_text)
+        result = self.handle_text(line_edit.text())
+        line_edit.setText(result[0])
+        palette = self._set_color_to_text(line_edit, result[1])
 
-        if not size:
-            keyboard.select_button(self.blocked_text[0])
+        text = result[0]
+
+        if not len(text):
             return None
 
-        is_match = edit_text == self.blocked_text[:size]
-        palette = self._set_color_to_text(line_edit, is_match)
+        elif len(text) == self.size:
+            return int(int(self.milliseconds_to_minutes)
+                       * len(text) / self.timer.elapsed()), self.error_count
+
+        self._select_button(keyboard, result[0], result[1])
+        line_edit.setPalette(palette)
+
+    def handle_text(self, text: str) -> tuple[str, bool]:
+        size = len(text)
+        is_match = text == self.blocked_text[:size]
 
         if not is_match:
-            keyboard.select_button("Backspace")
             if size > 1:
-                if edit_text[-2] != self.blocked_text[size - 2]:
-                    line_edit.backspace()
+                if text[-2] != self.blocked_text[size - 2]:
+                    text = text[:size - 1]
             self.error_count += 1
-        elif size == self.size:
-            return int(int(self.milliseconds_to_minutes)
-                       * size / self.timer.elapsed()), self.error_count
+            code = False
         else:
-            keyboard.select_button(self.blocked_text[size])
-
-        line_edit.setPalette(palette)
+            code = True
+        return text, code
 
     def _set_color_to_text(self, line_edit: QLineEdit, is_match: bool):
         palette = line_edit.palette()
@@ -62,3 +68,9 @@ class LineHandler:
                          if is_match else
                          QColor(self.constants["color_for_wrong_text"]))
         return palette
+
+    def _select_button(self, keyboard: Keyboard, text: str, code: bool):
+        if code:
+            keyboard.select_button(self.blocked_text[len(text)])
+        else:
+            keyboard.select_button("Backspace")

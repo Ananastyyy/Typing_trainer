@@ -28,5 +28,15 @@
     "sentences_solved": 1,
     "avg_speed": 156,
     "error_rate": 1
+  },
+  "\u043f": {
+    "sentences_solved": 1,
+    "avg_speed": 144,
+    "error_rate": 1
+  },
+  "g": {
+    "sentences_solved": 1,
+    "avg_speed": 134,
+    "error_rate": 0
   }
 }

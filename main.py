@@ -1,8 +1,12 @@
-import sys
-from trainer.window.window import Window
-from PyQt5.QtWidgets import QApplication
+from trainer.threads.gui_thread import GUIThread
+from trainer.threads.music_thread import MusicThread
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Window()
-    sys.exit(app.exec_())
+    gui_thread = GUIThread()
+    music_thread = MusicThread()
+
+    music_thread.start()
+    gui_thread.start()
+
+    gui_thread.join()
+    music_thread.join()

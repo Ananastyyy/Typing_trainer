@@ -48,6 +48,7 @@ class Window(QMainWindow):
         self._build_keyboard()
         self._build_button()
         self._build_label()
+        self._build_menu_bar()
         self.show()
 
     def _build_line(self):

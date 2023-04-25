@@ -34,7 +34,7 @@ class DatabaseHandler:
 
     def _save_data(self):
         with open(self.file_path, "w") as f:
-            json.dump(self.data, f)
+            json.dump(self.data, f, indent=4)
 
     def _add_user(self, name: str):
         if name not in self.data:
@@ -51,7 +51,7 @@ class DatabaseHandler:
             self.data[self.user_name][self.solved] += \
                 sentences_solved
             self.data[self.user_name][self.speed] = avg_speed
-            self.data[self.user_name][self.error] = \
+            self.data[self.user_name][self.error] += \
                 error_rate
             self._save_data()
 
