@@ -1,8 +1,7 @@
-import configparser
-
 from PyQt5.QtCore import QRect
 from PyQt5.QtWidgets import QMainWindow, QFrame
 
+from config.conf_parser import ConfParser
 from trainer.window.gui.dialogs.login_dialog import LoginDialog
 from trainer.window.gui.dialogs.statistics_dialog import StatisticsDialog
 from trainer.window.gui.widgets.action import Action
@@ -20,7 +19,7 @@ from trainer.window.logic.line_handler import LineHandler
 
 
 class Window(QMainWindow):
-    def __init__(self, *__args):
+    def __init__(self, *__args) -> None:
         super().__init__(*__args)
         self._init_config_file()
         self._build_main_window()
@@ -29,12 +28,11 @@ class Window(QMainWindow):
         self.line_handler = LineHandler()
         self.database = DatabaseHandler(self.constants["path_to_database"])
 
-    def _init_config_file(self):
-        config = configparser.ConfigParser()
-        config.read("config/window.ini", encoding='utf-8')
-        self.constants = dict(config.items("WINDOW"))
+    def _init_config_file(self) -> None:
+        config = ConfParser()
+        self.constants = config.window
 
-    def _build_main_window(self):
+    def _build_main_window(self) -> None:
         self.setWindowTitle(self.constants["window_title"])
         self.setFixedSize(700, 590)
         self.setStyleSheet(self.constants["background_window"])
@@ -43,7 +41,7 @@ class Window(QMainWindow):
         self.widget = Widget(self.central_widget, 57, 0, 593, 241)
         self.font = Font()
 
-    def _build_user_interface(self):
+    def _build_user_interface(self) -> None:
         self._build_line()
         self._build_keyboard()
         self._build_button()
@@ -51,25 +49,25 @@ class Window(QMainWindow):
         self._build_menu_bar()
         self.show()
 
-    def _build_line(self):
+    def _build_line(self) -> None:
         self.line_edit = Line(self.widget, self.font, 0, 50, 593, 51, True)
         self.line_edit.textChanged.connect(self.on_text_changed)
 
         self.line_blocked = Line(self.widget, self.font, 0, 100, 593, 51, True)
 
-    def _build_keyboard(self):
+    def _build_keyboard(self) -> None:
         self.keyboardFrame = QFrame(self.central_widget)
         self.keyboardFrame.setGeometry(QRect(57, 260, 761, 311))
 
         self.keyboard = Keyboard(self.keyboardFrame, self.font)
 
-    def _build_button(self):
+    def _build_button(self) -> None:
         button_style = self.constants["button_style"]
         self.start_button = Button(self.widget, self.constants[
             "generate_sentences"], button_style, 221, 180, 150, 50)
         self.start_button.clicked.connect(self.on_start_click)
 
-    def _build_label(self):
+    def _build_label(self) -> None:
         label_style = self.constants["label_style"]
         self.emoji_time = Label(self.widget, self.constants["emoji_time"],
                                 label_style, self.font, 328, 10, 31, 31)
@@ -85,7 +83,7 @@ class Window(QMainWindow):
                                       self.constants["start_error"],
                                       label_style, self.font, 450, 10, 81, 31)
 
-    def _build_menu_bar(self):
+    def _build_menu_bar(self) -> None:
         self.menuBar = MenuBar(self, 0, 0, 722, 26)
         menu_style = self.constants["menu_bar_style"]
         self.menuBar.setStyleSheet(menu_style)
@@ -99,7 +97,7 @@ class Window(QMainWindow):
         self.userMenu.addAction(self.stat)
         self.menuBar.addAction(self.userMenu.menuAction())
 
-    def on_start_click(self):
+    def on_start_click(self) -> None:
         self.line_edit.clear()
         sentence = self.generator.get_sentence()
         self.line_blocked.setText(sentence)
@@ -107,22 +105,22 @@ class Window(QMainWindow):
         self.line_edit.setReadOnly(False)
         self.keyboard.select_button(str(sentence[0]))
 
-    def on_text_changed(self):
+    def on_text_changed(self) -> None:
         data = self.line_handler.handle(self.line_edit, self.keyboard)
         if data:
             symbols = data[0]
             count = data[1]
-            self.minute_symbols.setText(f"{symbols}")
-            self.mistake_percents.setText(f"{count}")
+            self.minute_symbols.setText(str(symbols))
+            self.mistake_percents.setText(str(count))
             self.database.update_user_stats(1, symbols, count)
             self.line_edit.clear()
             self.on_start_click()
 
-    def show_login_dialog(self):
+    def show_login_dialog(self) -> None:
         login_dialog = LoginDialog(self.database)
         login_dialog.exec_()
 
-    def show_statistics_dialog(self):
+    def show_statistics_dialog(self) -> None:
         data = self.database.get_user_stats()
         if data:
             stat_dialog = StatisticsDialog(data)

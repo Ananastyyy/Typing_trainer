@@ -1,7 +1,8 @@
 from trainer.threads.gui_thread import GUIThread
 from trainer.threads.music_thread import MusicThread
 
-if __name__ == "__main__":
+
+def main():
     gui_thread = GUIThread()
     music_thread = MusicThread()
 
@@ -10,3 +11,7 @@ if __name__ == "__main__":
 
     gui_thread.join()
     music_thread.join()
+
+
+if __name__ == "__main__":
+    main()

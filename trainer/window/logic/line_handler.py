@@ -1,14 +1,15 @@
+from typing import Any
+
 from PyQt5.QtCore import QElapsedTimer
 from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QLineEdit
 
-import config
+from config.conf_parser import ConfParser
 from trainer.window.gui.widgets.keyboard import Keyboard
-import configparser
 
 
 class LineHandler:
-    def __init__(self):
+    def __init__(self) -> None:
         self.timer = QElapsedTimer()
         self.blocked_text = None
         self.size = None
@@ -16,21 +17,20 @@ class LineHandler:
         self.keyboard = None
         self._init_config_file()
 
-    def _init_config_file(self):
-        self.config = configparser.ConfigParser()
-        self.config.read("config/logic.ini")
-        self.constants = dict(self.config.items("LINE_HANDLER"))
+    def _init_config_file(self) -> None:
+        config = ConfParser()
+        self.constants = config.line_handler
         self.milliseconds_to_minutes = self.constants[
             "milliseconds_to_minutes"]
 
-    def set_blocked_text(self, blocked_text: str):
+    def set_blocked_text(self, blocked_text: str) -> None:
         self.timer.start()
         self.error_count = 0
         self.blocked_text = blocked_text
         self.size = len(blocked_text)
 
     def handle(self, line_edit: QLineEdit, keyboard: Keyboard) \
-            -> tuple[int, int] or None:
+            -> tuple[int, Any] | None:
         result = self.handle_text(line_edit.text())
         line_edit.setText(result[0])
         palette = self._set_color_to_text(line_edit, result[1])
@@ -61,7 +61,8 @@ class LineHandler:
             code = True
         return text, code
 
-    def _set_color_to_text(self, line_edit: QLineEdit, is_match: bool):
+    def _set_color_to_text(self, line_edit: QLineEdit,
+                           is_match: bool) -> QPalette:
         palette = line_edit.palette()
         palette.setColor(QPalette.Text,
                          QColor(self.constants["color_for_right_text"])
@@ -69,7 +70,8 @@ class LineHandler:
                          QColor(self.constants["color_for_wrong_text"]))
         return palette
 
-    def _select_button(self, keyboard: Keyboard, text: str, code: bool):
+    def _select_button(self, keyboard: Keyboard, text: str,
+                       code: bool) -> None:
         if code:
             keyboard.select_button(self.blocked_text[len(text)])
         else:

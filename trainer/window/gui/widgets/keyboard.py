@@ -2,12 +2,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFrame
 
-from trainer.window.gui.widgets.keyboardButton import KeyboardButton
+from trainer.window.gui.widgets.keyboard_button import KeyboardButton
 from trainer.window.gui.widgets.line import Line
 
 
 class Keyboard:
-    def __init__(self, window: QFrame, font: QFont):
+    def __init__(self, window: QFrame, font: QFont) -> None:
         self.hands = {"left": "левая рука",
                       "right": "правая рука",
                       "anyone": "любая рука"}
@@ -21,7 +21,7 @@ class Keyboard:
         self.name_fingers = Line(window, font, 92, 220, 410, 40, True)
         self.name_fingers.setAlignment(Qt.AlignCenter)
 
-    def _add_buttons(self, window: QFrame, font: QFont):
+    def _add_buttons(self, window: QFrame, font: QFont) -> None:
         self.buttons = {
             "Ё": KeyboardButton("Ё", window, font, 0, 0, 40, 40, True,
                                 self.hands["left"], self.fingers["pink"]),
@@ -142,14 +142,14 @@ class Keyboard:
 
         }
 
-    def select_button(self, letter: str):
+    def select_button(self, letter: str) -> None:
         self._deselect_button()
         self.active_button = self.buttons[letter.upper()]
         self.active_button.setStyleSheet("background-color: lightgreen")
         self.name_fingers.setText(f"{self.active_button.name_hand}, "
                                   f"{self.active_button.name_fingers}")
 
-    def _deselect_button(self):
+    def _deselect_button(self) -> None:
         if self.active_button:
             self.active_button.setStyleSheet("background-color: white")
             self.active_button = None

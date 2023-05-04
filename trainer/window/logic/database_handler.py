@@ -1,19 +1,19 @@
-import configparser
 import json
+
+from config.conf_parser import ConfParser
 
 
 class DatabaseHandler:
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str) -> None:
         self.file_path = file_path
         self.data = {}
         self._load_data()
         self._init_config_file()
         self.user_name = None
 
-    def _init_config_file(self):
-        config = configparser.ConfigParser()
-        config.read("config/logic.ini")
-        constants = dict(config.items("DATABASE_HANDLER"))
+    def _init_config_file(self) -> None:
+        config = ConfParser()
+        constants = config.database_handler
         self.solved = constants["solved"]
         self.speed = constants["avg_speed"]
         self.error = constants["error_rate"]
@@ -25,18 +25,18 @@ class DatabaseHandler:
         self.user_name = user_name
         self._add_user(user_name)
 
-    def _load_data(self):
+    def _load_data(self) -> None:
         try:
             with open(self.file_path, "r") as f:
                 self.data = json.load(f)
         except json.decoder.JSONDecodeError:
             self.data = {}
 
-    def _save_data(self):
+    def _save_data(self) -> None:
         with open(self.file_path, "w") as f:
             json.dump(self.data, f, indent=4)
 
-    def _add_user(self, name: str):
+    def _add_user(self, name: str) -> None:
         if name not in self.data:
             self.data[name] = {
                 self.solved: 0,
@@ -55,6 +55,6 @@ class DatabaseHandler:
                 error_rate
             self._save_data()
 
-    def get_user_stats(self) -> tuple:
+    def get_user_stats(self) -> tuple | None:
         if self.is_authorised():
             return tuple(self.data[self.user_name].values())
