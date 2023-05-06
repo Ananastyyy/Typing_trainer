@@ -1,1 +1,17 @@
-{}
+{
+    "Max": {
+        "sentences_solved": 0,
+        "avg_speed": 0,
+        "error_rate": 0
+    },
+    " ": {
+        "sentences_solved": 2,
+        "avg_speed": 1,
+        "error_rate": 2
+    },
+    "Dan": {
+        "sentences_solved": 6,
+        "avg_speed": 230,
+        "error_rate": 0
+    }
+}

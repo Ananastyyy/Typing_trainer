@@ -15,7 +15,7 @@ class MusicThread(threading.Thread):
         config = ConfParser()
         self.constants = config.music_thread
 
-    def start(self, **kwargs):
+    def start(self, **kwargs) -> None:
         playlist = QMediaPlaylist(self.player)
         media = QMediaContent(
             QUrl.fromLocalFile(self.constants["path_to_music"]))
