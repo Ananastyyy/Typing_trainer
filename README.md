@@ -10,3 +10,8 @@
 ```
 pip install -r requirements.txt
 ```
+
+## Пример работы
+![image](https://github.com/Ananastyyy/Typing_trainer/assets/91197697/1dae9b95-9455-4f32-8a12-b7df7177b815)
+<p>
+*В фоновом режиме в приложении играет музыка
